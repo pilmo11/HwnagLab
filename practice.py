@@ -875,3 +875,5 @@ fp = BytesIO(fp.getvalue())
 my_sound = AudioSegment.from_file (fp, format = "mp3")
 # 컴퓨터로 재생합니다.
 play (my_sound)
+
+#github로 올리기
