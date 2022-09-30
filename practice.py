@@ -771,4 +771,107 @@ while True:
         break
       
 
-#%%
+#%% 음석인식과 예외처리
+import speech_recognition as sr  #python 버전 3.9
+
+# 인식기(Recognizer) 객체를 만듭니다.
+r = sr.Recognizer()
+
+# 마이크 객체를 만듭니다. 
+# microphone = sr.Microphone(device_index=2)
+microphone = sr.Microphone() # 대부분의 경우 device_index 생략 가능합니다.
+
+
+# 마이크로 음성을 녹음합니다.
+# with microphone as source는 microphone 객체를 사용할 준비를 시키고 
+# with-블럭 안에서 source라는 이름으로 사용하겠다는 의미입니다.
+# 어떤 자료형의 객체가 with문과 같이 사용될 수 있는지 아닌지는 
+# 미리 정해져 있기 때문에 보통 예제 코드를 참고해서 사용합니다.
+while True:
+    with microphone as source:
+        r.adjust_for_ambient_noise(source) # 배경 소음을 측정합니다.
+        print("음성 인식 대기중")
+        audio = r.listen(source) # 일정 크기 이상의 소리가 들리면 녹음합니다.
+
+# with-as 블럭 안에서 정의한 변수인 audio를 블럭 밖에서도 사용할 수 있습니다.
+    try:
+        text = r.recognize_google(audio, language="ko")
+    except sr.UnknownValueError:
+        print ("인식할 수 없습니다.") 
+    except sr.RequestError as e:
+        print ("인식에 문제가 있습니다.", e)
+    else:
+        print("인식 결과:", text)
+        if text =="종료":
+            break
+
+#%%  [참고] ```r.reconrd()```를 이용해서 정해진 시간 동안 녹음을 할 수도 있습니다.
+import speech_recognition as sr
+
+# initialize the recognizer
+r = sr.Recognizer()
+
+with sr.Microphone() as source:
+    print("앞으로 5초 동안 녹음합니다.")
+    audio_data = r.record(source, duration=5)
+
+print("녹음이 완료되었습니다. 인식을 시작합니다.")
+try:
+    text = r.recognize_google(audio_data, language="ko")
+except:  # 다양한 예외들을 통틀어서 except 하나로 처리할 수도 있습니다.
+    print("음성이 인식되지 않았습니다.")
+else:
+    print(text)
+    
+#%%[참고] 아래와 같이 ```sr.AudioFile()```을 이용해서 음성 파일을 읽어들여서 인식할 수도 있습니다.
+
+import speech_recognition as sr
+
+r = sr.Recognizer()
+
+with sr.AudioFile("audio_sample.wav") as source:
+    audio = r.record(source)
+
+try:
+    text = r.recognize_google(audio, language="ko")
+except:
+    print("음성이 인식되지 않았습니다.")
+else:
+    print(text)
+    
+#%% 음성합성 음성을 mp3파일로 저장한후 읽어서 재생
+import gtts
+from pydub import AudioSegment 
+from pydub.playback import play
+
+# 텍스트를 음성으로 바꿉니다.
+tts = gtts.gTTS ("안녕하세요? 인공지능입니다.", lang ="ko")
+
+# mp3 파일로 저장합니다.
+tts.save ("temp.mp3")
+
+# mp3 파일을 다시 읽어들입니다.
+my_sound = AudioSegment.from_mp3 ("temp.mp3")
+
+# 컴퓨터로 재생합니다.
+play (my_sound)
+
+#%% 음성합성2 음성을 메모리에 저장후 읽어서 재생
+import gtts
+from pydub import AudioSegment
+from pydub.playback import play
+from io import BytesIO
+
+# 텍스트를 음성으로 바꿉니다.
+tts = gtts.gTTS ("안녕하세요? 인공지능입니다.", lang ="ko")
+tts1 = gtts.gTTS ("Hi! I am an artificial intelligence.", lang ="ko")
+
+# mp3 오디오 데이터를 메모리에 저장합니다.
+fp = BytesIO()
+tts1.write_to_fp(fp)
+fp = BytesIO(fp.getvalue())
+
+# 오디오 데이터를 메모리로부터 가져옵니다.
+my_sound = AudioSegment.from_file (fp, format = "mp3")
+# 컴퓨터로 재생합니다.
+play (my_sound)
