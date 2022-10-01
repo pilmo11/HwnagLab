@@ -863,12 +863,12 @@ from pydub.playback import play
 from io import BytesIO
 
 # 텍스트를 음성으로 바꿉니다.
-tts = gtts.gTTS ("안녕하세요? 인공지능입니다.", lang ="ko")
+tts = gtts.gTTS ("안녕하세요? 이제인아빠 이필형입니다.", lang ="ko")
 tts1 = gtts.gTTS ("Hi! I am an artificial intelligence.", lang ="ko")
 
 # mp3 오디오 데이터를 메모리에 저장합니다.
 fp = BytesIO()
-tts1.write_to_fp(fp)
+tts.write_to_fp(fp)
 fp = BytesIO(fp.getvalue())
 
 # 오디오 데이터를 메모리로부터 가져옵니다.
