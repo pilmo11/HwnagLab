@@ -474,9 +474,12 @@ print (f'커트 가격은 {price1}원입니다".')
 
 # %%
 # 전달값은 여러개 가능, 이때는 기본값으로 설정하는것이 편함
-def get_price (is_vip=False, is_birthday=False, is_membership=False, card=False, review=False, first_time=False)
+def get_price (is_vip=False, is_birthday=False, is_membership=False, card=False, review=False, first_time=False):
 # 여러개의 기본값들 중 한개를 바꿀때는 그 전달값만 딱 적으면 됨.
-def get_price(review=True, is_birthday=True)
+def get_price(review=True, is_birthday=True):
+# 기본값이 없는 매개변수는 왼쪽에 와야 함. 아니면 오류
+def repeat_print (message, count=1):
+
 
 
 # %%  
@@ -493,12 +496,61 @@ random.choice(("+", "-", "*", "//")) # 시퀀스중 하나를 랜덤으로 골�
 
 # %%
 # 가변인자: 갯수가 바뀔수 있는 인자, 전달값 앞에 * 붙여주면 됨 -- tuple 형태로 받음.
+# 즉, 한개의 변수가 들어가는 자리에 여러갯수를 넣고 싶다면
 def visitors (today, *customers): # 가변인자는 한 함수에 한번만 사용가능
   print (today)
   for customer in customers:
     print (customer)
 visitors ('2022년 9월 1일','이필형','나정화')
-    
+
+
+#** 두개 붙이면 disct 형태로 받음.
+def print_many(**keywords):
+    print(type(keywords))
+    for k in keywords:
+        print(k, ":", keywords[k])
+print_many (a=65,b=66)  #단 등로를 붙여서 지정
+
+#%%
+#unpacking: 연산자를 이터러블 앞에 사용하면 하나의 이터러블 객체로 묶여 있는 여러개의 아이템들을 여러개의 객체로 풀어줌.
+my_list = [1, 2, 3]
+print(my_list)  # print([1, 2, 3])
+print(*my_list)  # print(1, 2, 3)
+
+my_list1 = [1, 2, 3]
+my_list2 = [4, 5, 6]
+my_list = [*my_list1, *my_list2]
+your_list = [my_list1, my_list2]
+print (my_list)
+print (your_list)
+
+def add_three(a, b, c):
+    print("a = ", a)
+    print("b = ", b)
+    print("c = ", c)
+    return a + b + c
+add_three (*[1,2,3])  #add_three (1,2,3)
+
+#*연산자로 사전을 언팩하면 키만 전달됩니다.
+def add_three(a, b, c):
+    print("a = ", a)
+    print("b = ", b)
+    print("c = ", c)
+    return a + b + c
+add_three (*{"A":1, "B":2, "C":3})
+
+{**{"a": 1, "b": 2}, "c": 2}
+
+def add_three(a, b, c):
+
+    print("a = ", a)
+    print("b = ", b)
+    print("c = ", c)
+
+    return a + b + c
+add_three (**{"a":1, "b":2, "c":3})
+#add_three (a=1,b=2,c=3) 과 동일
+
 # %%
 # 함수내에서는 지역변수로, 함수밖에서는 전역변수
 # 함수내에서 전역변수를 지정, 정의하려면 global 붙여주면 됨.
