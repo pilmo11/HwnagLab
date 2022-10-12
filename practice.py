@@ -504,12 +504,12 @@ def visitors (today, *customers): # 가변인자는 한 함수에 한번만 사�
 visitors ('2022년 9월 1일','이필형','나정화')
 
 
-#** 두개 붙이면 disct 형태로 받음.
+#** 두개 붙이면 dict 형태로 받음.
 def print_many(**keywords):
     print(type(keywords))
     for k in keywords:
         print(k, ":", keywords[k])
-print_many (a=65,b=66)  #단 등로를 붙여서 지정
+print_many (a=65,b=66)  #단 등호를 붙여서 지정
 
 #%%
 #unpacking: 연산자를 이터러블 앞에 사용하면 하나의 이터러블 객체로 묶여 있는 여러개의 아이템들을 여러개의 객체로 풀어줌.
@@ -566,6 +566,56 @@ def yes_secret():
   message ='전역변수임 속았지'
   print (message) #전역변수가 새로 바뀌어서 출력
 yes_secret()
+
+def A():
+  x =10
+  def B():
+    nonlocal x # nonlocal -- 지역변수아니다로 선언
+    x =20 # 가장 가까운 바깥쪽 지역변수를 변경
+  B()
+  print (x)
+A()
+#%%
+# 짧고 간결한 함수는 굳이 이름 붙이지 않고 간결하게 사용: 람다 함수
+add_100 = lambda x: x + 100
+list (map (add_100, [1,2,3,4])) 
+# map의 첫 인수로 주어진 함수를
+# 두 번째 인수로 주어진 이터러블의 각 아이템에
+# 차례로 적용합니다.
+# map()의 결과를 어떤 컨테이너에 담을지 지정해줘야 함.
+
+list (map (lambda x: x + 100, [1,2,3,4]))
+# 간단한 함수를 사용할 때는
+# 람다로 더 간결하게 사용합니다.
+
+list (map (lambda x,y: x+y, [1,2,3,4],[5,6,7,8]))
+# 매개변수가 여러개인 함수를 적용할 때는 
+# 이터러블도 여러개를 넣어줘야 합니다.
+
+list (filter (lambda x : x%2 ==0, [1,2,3,4,5])) #True 값을 filter해서 반환해줌.
+
+from functools import reduce
+add= lambda x,y: x+y
+reduce (add, [1,2,3,4])
+# [add(1,2),3,4] --> [3,3,4]
+# [add(3,3),4] --> [6,4]
+# [add(6,4)] --> [10]
+
+my_dict = {"apple": 3, "Alpha": 100, "Drive": 10, "data": 33, "Billy": 50}
+sorted (my_dict.items(), key=lambda item: item[1])   #list로 반환
+dict(sorted (my_dict.items(), key=lambda item: item[1])) # dict로 반환
+# lambda 로 정렬기준을 간단하게 명령할수 있음. 
+# 정렬 기준(key)을 아이템의 값(item[1])을 사용하도록 변경
+# 용어 혼동 주의: 정렬 기준이란 의미의 key와 사전에서 키:값 쌍에서의 key
+
+
+def calc():
+  a=3
+  b=5
+  return lambda x: a*x + b   #람다 표현식을 반환, 이렇게 간단한 함수는 def 안에 다른 def을 넣지 않아도 됨.
+c=calc () # 클로저 (closure)라고 함. 클로저는 함수를 둘러싼 환경을 유지하다가 나중에 다시 사용하는 함수를 뜻함.
+print (c(1),c(2),c(4))
+
 # %%
 import time
 print (time.asctime()) #현재 시간을 string으로 보여줌
@@ -594,37 +644,66 @@ get clone https://github.com/deeplearningzerotoall/PyTorch.git
 
 
 # %% class (설계도[객체]와 설명서[기능]를 합친 개념)
+# 객체지향(object oriented) 프로그래밍 때 활용 - 복잡한 문제를 잘게 나누어 객체로 만들고, 객체를 조합해서 문제를 해결함.
+# 복잡한 문제를 처리하는데 유용하고, 기능을 개선시키고 발전시킬때도 해당 클래스만 수정하면 되므로 유지보수에도 효율적
 class BlackBox:  #class명을 대소문자 섞어서
   pass # 구현해야 하는 걸 잠시 미루는 명령어
-b1=BlackBox() # b1이 BlackBox class 로 선언
-b1.name='까망이'
+b1=BlackBox() # b1이 BlackBox class 로 선언, class를 사용하려면 이렇게 instance 선언을 해주어야 함.
+b1.name='까망이' #method는 class가 아니라 instance를 통해 호출함.
 print(b1.name)
 print(isinstance(b1, BlackBox))  #b1이 BlackBox class의 instance가 맞는지 확인
 
 
-# %%
+# %% class의 속성 사용하기. 인스턴스 만들때 값 받기
+class 클래스이름:
+  def __init__(self, 매개변수 1, 매개변수2):
+    self.속성1 = 매개변수 1
+    self.속성2 = 매개변수 2
+
+#%%
 class BlackBox:
-  def __init__(self, name, price): #클래스내에 사용되는 함수를 method라고 함. 반드시 처음전달겂은 self
-    self.name=name  #멤버변수, self.name 처럼 해야 함.
-    self.price=price
-b1=BlackBox('까망이', 200000) #객체
+  def __init__(self, name, price): # 속성 (attribute)지정 #클래스내에 사용되는 함수(function)를 method라고 함. 반드시 처음전달겂은 self, init --> initialize
+    self.name=name  #self.속성 = 값
+    self.price=price #self에 점을 붙여서 사용 (self.xxx)
+  # __init__ 메서드는 james=Person()처럼 클래스에 ()괄호를 붙여서 인스턴스를 호츨하는 special method 또는 magic method임.
+b1=BlackBox('까망이', 200000) #b1 객체
 print(b1.name, b1.price)
 b2=BlackBox('노랑이', 100000) #객체
 print(b2.name, b2.price)
+
 b2.nickname='1호'   #class내의 각 객체는 독립적이고, 각 객체는 다른 수의 변수를 가질수 있음.
-print(b2.name, b2.price, b2.nickname)
+print(b2.name, b2.price, b2.nickname) #객체(instance).속성  의 형태
+
 
 # %%
 class BlackBox:
   def __init__(self, name, price):
     self.name=name  
-    self.price=price
+    self.price=price 
+    
   def set_travel_mode (self, min):
     print (f'{self.name} {min}분 동안 여행모드 ON')
-b1=BlackBox('까망이', 200000) 
+b1=BlackBox('까망이', 200000)   #순서대로 '까망이'가 name, 200000가 price 로 지정
 b2=BlackBox('노랑이', 100000) 
 b1.set_travel_mode (20) #아래와 같은 결과
 BlackBox.set_travel_mode (b1, 20)  #위와 같은 결과
+
+#%%
+#비공개 속성: self.__속성 의 형태. 클래스 안의 매서드에서만 접근할수 있음.
+
+class Person:
+  def __init__(self, name, age, address, wallet):
+    self.name =name
+    self.age =age
+    self.address =address
+    self.__wallet = wallet #변수앞에 __를 붙여서 비공개속성으로 만듬.
+  def pay (self, amount):
+    self.__wallet -=amount
+    print ('이제 {}원 남았네요'.format (self.__wallet))
+
+maria = Person('마리아',20,'서울시 서초구 반포동', 10000)
+maria.pay (3000)  
+
 
 # %%  class 의 상속
 #기본 BlackBox
